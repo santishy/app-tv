@@ -1,22 +1,29 @@
-const {Response} = require('express')
+const { response, request } = require('express')
 
-const getProducts = (req,res = Response) => {
-    res.json({status:'ok'})
+const getProducts = (req, res = response) => {
+    const { page } = req.query;
+    res.json({ status: 'ok', page })
 }
 
 const getProduct = () => {
 
 }
 
-const updateProduct = () => {
-
+const updateProduct = (req = request, res = response) => {
+    const { id } = req.params;
+    res.json({
+        id,
+        msg: 'patch'
+    })
 }
 
-const createProduct = () => {
+const createProduct = (req = request, res = response) => {
+    const body = req.body;
 
+    res.json({ body })
 }
 
-const deleteProduct = () => {} 
+const deleteProduct = () => { }
 
 
 module.exports = {
