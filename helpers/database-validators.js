@@ -1,9 +1,17 @@
 const { default: mongoose } = require("mongoose")
 
-const validateUniqueField = (modelName, field) => {
-    return async (value) => {
+const validateUniqueField = (modelName = '', field = '') => {
+    return async (value, { req }) => {
         const model = mongoose.model(modelName);
-        const exists = await model.findOne({ [field]: value });
+
+        if (!model) {
+            throw new Error(`The ${modelName} model does not exist`)
+        }
+        const query = { [field]: value };
+        if (req.params.id && (field != '_id')) {
+            query._id = { $ne: req.params.id };
+        }
+        const exists = await model.findOne(query);
         if (exists) {
             throw new Error(`${field} already exists.`)
         }
@@ -12,17 +20,28 @@ const validateUniqueField = (modelName, field) => {
 }
 
 const theFieldExists = (modelName, field) => {
-    return async (value) => {
+    return async (value, { req }) => {
+
         const model = mongoose.model(modelName);
+
         if (!model) {
             throw new Error(`The ${modelName} model does not exist`)
         }
-        const exists = await model.findOne({ [field]: value });
-        if (!exists) {
-            throw new Error('')
+        const query = { [field]: value };
+
+        if (req.params.id && (field != '_id')) {
+            query._id = { $ne: req.params.id };
         }
+
+        const exists = await model.findOne(query);
+
+        if (!exists) {
+            throw new Error(`The ${field} field does not exist.`)
+        }
+        return true;
     }
 }
 module.exports = {
-    validateUniqueField
+    validateUniqueField,
+    theFieldExists
 }

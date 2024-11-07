@@ -11,12 +11,22 @@ const getUser = () => {
     const user = new User()
 }
 
-const updateUser = (req = request, res = response) => {
+const updateUser = async (req = request, res = response) => {
     const { id } = req.params;
-    res.json({
-        id,
-        msg: 'patch'
-    })
+    const { password, _id, ...rest } = req.body;
+    let user = null;
+    try {
+
+        if (password) {
+            const salt = bcryptjs.genSaltSync();
+            rest.password = bcryptjs.hashSync(password, salt)
+        }
+        user = await User.findByIdAndUpdate(id, rest);
+    } catch (error) {
+        console.log(error);
+        throw new Error('Error updating user')
+    }
+    return res.json({ user })
 }
 
 const createUser = async (req = request, res = response) => {

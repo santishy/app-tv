@@ -1,6 +1,6 @@
 const { Router } = require('express')
 const { check } = require('express-validator');
-const { validateUniqueField } = require('../helpers/database-validators');
+const { validateUniqueField, theFieldExists } = require('../helpers/database-validators');
 
 const { createUser, deleteUser, getUser, getUsers, updateUser } =
     require('../controllers/user.controller');
@@ -25,7 +25,9 @@ router.post('/', [
 
 router.put('/:id', [
     check('id', 'Is not a valid mongo id').isMongoId(),
-    check('id').custom(validateUniqueField('User', '_id')),
+    check('id').custom(theFieldExists('User', '_id')),
+    check('username').custom(validateUniqueField('User', 'username')),
+    check('email').custom(validateUniqueField('User', 'email')),
     validateRequests
 ], updateUser);
 
