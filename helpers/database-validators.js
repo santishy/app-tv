@@ -1,7 +1,7 @@
 const { default: mongoose } = require("mongoose")
 
-const validateUniqueField = (value) => {
-    return async (modelName, field) => {
+const validateUniqueField = (modelName, field) => {
+    return async (value) => {
         const model = mongoose.model(modelName);
         const exists = await model.findOne({ [field]: value });
         if (exists) {
@@ -11,6 +11,18 @@ const validateUniqueField = (value) => {
     };
 }
 
+const theFieldExists = (modelName, field) => {
+    return async (value) => {
+        const model = mongoose.model(modelName);
+        if (!model) {
+            throw new Error(`The ${modelName} model does not exist`)
+        }
+        const exists = await model.findOne({ [field]: value });
+        if (!exists) {
+            throw new Error('')
+        }
+    }
+}
 module.exports = {
     validateUniqueField
 }
