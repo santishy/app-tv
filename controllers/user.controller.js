@@ -2,9 +2,28 @@ const { response, request } = require('express');
 const bcryptjs = require('bcryptjs')
 const User = require('../models/User');
 
-const getUsers = (req, res = response) => {
-    const { page } = req.query;
-    res.json({ status: 'ok', page })
+const getUsers = async (req, res = response) => {
+
+    const { page, limit = 5 } = req.query;
+
+    const query = { status: true };
+
+    const [total, users] = await Promise.all([
+        User.countDocuments(query),
+        User.find(query)
+            .skip(page)
+            .limit(limit)
+    ]);
+    res.json({
+        data: [
+            users
+        ],
+        meta: {
+            total,
+            per_page: limit,
+            page
+        }
+    })
 }
 
 const getUser = () => {
@@ -35,15 +54,6 @@ const createUser = async (req = request, res = response) => {
 
     const user = new User({ password, name, username, email });
 
-    // const emailExists = await User.findOne({ email });
-
-    // if (emailExists) {
-    //     return res.status(422).json({
-    //         errors: [
-    //             { message: 'The email already exists' }
-    //         ]
-    //     })
-    // }
     const salt = bcryptjs.genSaltSync();
     user.password = bcryptjs.hashSync(password, salt)
     await user.save();
