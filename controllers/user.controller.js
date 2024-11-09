@@ -60,7 +60,11 @@ const createUser = async (req = request, res = response) => {
     return res.json({ user })
 }
 
-const deleteUser = () => { }
+const deleteUser = async (req, res) => {
+    const { id } = req.params;
+    await User.findByIdAndUpdate(id, { status: false });
+    return res.status(204).json()
+}
 
 
 module.exports = {
