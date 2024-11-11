@@ -2,9 +2,28 @@ const { response, request } = require('express');
 const bcryptjs = require('bcryptjs')
 const User = require('../models/User');
 
-const getUsers = (req, res = response) => {
-    const { page } = req.query;
-    res.json({ status: 'ok', page })
+const getUsers = async (req, res = response) => {
+
+    const { page, limit = 5 } = req.query;
+
+    const query = { status: true };
+
+    const [total, users] = await Promise.all([
+        User.countDocuments(query),
+        User.find(query)
+            .skip(page)
+            .limit(limit)
+    ]);
+    res.json({
+        data: [
+            users
+        ],
+        meta: {
+            total,
+            per_page: limit,
+            page
+        }
+    })
 }
 
 const getUser = () => {
@@ -41,7 +60,11 @@ const createUser = async (req = request, res = response) => {
     return res.json({ user })
 }
 
-const deleteUser = () => { }
+const deleteUser = async (req, res) => {
+    const { id } = req.params;
+    await User.findByIdAndUpdate(id, { status: false });
+    return res.status(204).json()
+}
 
 
 module.exports = {
