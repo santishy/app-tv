@@ -35,15 +35,6 @@ const createUser = async (req = request, res = response) => {
 
     const user = new User({ password, name, username, email });
 
-    // const emailExists = await User.findOne({ email });
-
-    // if (emailExists) {
-    //     return res.status(422).json({
-    //         errors: [
-    //             { message: 'The email already exists' }
-    //         ]
-    //     })
-    // }
     const salt = bcryptjs.genSaltSync();
     user.password = bcryptjs.hashSync(password, salt)
     await user.save();
