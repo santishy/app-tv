@@ -12,8 +12,8 @@ router.post('/login', [
     check('username').custom(theFieldExists('User', 'username')),
     check('password', 'The password is required').notEmpty(),
     validateRequests
-], login);
 
+], login);
 
 
 module.exports = router;
