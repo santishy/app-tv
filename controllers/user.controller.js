@@ -50,12 +50,13 @@ const updateUser = async (req = request, res = response) => {
 
 const createUser = async (req = request, res = response) => {
 
-    const { password, name, username, email } = req.body;
+    const { password, ...rest } = req.body;
 
-    const user = new User({ password, name, username, email });
+    const user = new User({ password, ...rest });
 
     const salt = bcryptjs.genSaltSync();
-    user.password = bcryptjs.hashSync(password, salt)
+    user.password = bcryptjs.hashSync(password, salt);
+
     await user.save();
     return res.json({ user })
 }

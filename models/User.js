@@ -22,6 +22,11 @@ const userSchema = Schema({
     status: {
         type: Boolean,
         default: true
+    },
+    role: {
+        type: String,
+        enum: ['admin', 'user', 'guest'],
+        default: 'user'
     }
 });
 

@@ -7,6 +7,7 @@ const { createUser, deleteUser, getUser, getUsers, updateUser } =
     require('../controllers/user.controller');
 
 const { validateRequests } = require('../middlewares/validate-requests');
+const { hasRole } = require('../middlewares/authorization');
 const router = Router();
 
 router.get('/', [
@@ -18,6 +19,7 @@ router.get('/', [
 router.get('/:id', getUser);
 
 router.post('/', [
+    check('role', 'The role is invalid').optional().isIn(['admin', 'user', 'guest']),
     check('email', 'The email is not valid').isEmail(),
     check('name', 'The name is required').notEmpty(),
     check('username', 'The name is required').notEmpty(),
@@ -38,6 +40,7 @@ router.put('/:id', [
 
 router.delete('/:id', [
     verifyToken,
+    hasRole('admin'),
     check('id', 'Is not a valid mongo id').isMongoId(),
     check('id').custom(theFieldExists('User', '_id')),
     validateRequests
