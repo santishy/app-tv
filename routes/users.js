@@ -42,7 +42,7 @@ router.delete('/:id', [
     verifyToken,
     hasRole('admin'),
     check('id', 'Is not a valid mongo id').isMongoId(),
-    check('id').custom(theFieldExists('User', '_id')),
+    //check('id').custom(theFieldExists('User', '_id')),
     validateRequests
 ], deleteUser);
 
