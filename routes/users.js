@@ -1,6 +1,7 @@
 const { Router } = require('express')
 const { check, query } = require('express-validator');
 const { validateUniqueField, theFieldExists } = require('../helpers/database-validators');
+
 const { verifyToken } = require('../middlewares/auth')
 
 const { createUser, deleteUser, getUser, getUsers, updateUser } =
@@ -11,8 +12,8 @@ const { hasRole } = require('../middlewares/authorization');
 const router = Router();
 
 router.get('/', [
-    query('limit', 'The limit must be a positive integer').isNumeric().isInt(),
-    query('page', 'The page must be a positive integer').isNumeric().isInt(),
+    query('limit', 'The limit must be a positive integer').optional().isNumeric().isInt(),
+    query('page', 'The page must be a positive integer').optional().isNumeric().isInt(),
     validateRequests
 ], getUsers);
 
@@ -31,6 +32,8 @@ router.post('/', [
 ], createUser);
 
 router.put('/:id', [
+    verifyToken,
+    //hasRole('admin'),
     check('id', 'Is not a valid mongo id').isMongoId(),
     check('id').custom(theFieldExists('User', '_id')),
     check('username').custom(validateUniqueField('User', 'username')),
@@ -42,7 +45,7 @@ router.delete('/:id', [
     verifyToken,
     hasRole('admin'),
     check('id', 'Is not a valid mongo id').isMongoId(),
-    //check('id').custom(theFieldExists('User', '_id')),
+    check('id').custom(theFieldExists('User', '_id')),
     validateRequests
 ], deleteUser);
 

@@ -32,18 +32,26 @@ const getUser = () => {
 
 const updateUser = async (req = request, res = response) => {
     const { id } = req.params;
-    const { password, _id, ...rest } = req.body;
+    const { password, _id, role, ...rest } = req.body;
     let user = null;
     try {
-
         if (password) {
             const salt = bcryptjs.genSaltSync();
             rest.password = bcryptjs.hashSync(password, salt)
         }
-        user = await User.findByIdAndUpdate(id, rest);
+        if (role && req.user.hasRole('admin')) {
+            rest.role = role;
+        }
+        user = await User.findByIdAndUpdate(id, rest, { new: true });
     } catch (error) {
         console.log(error);
-        throw new Error('Error updating user')
+        return res.json({
+            errors: [
+                {
+                    "message": "Error updating user"
+                }
+            ]
+        });
     }
     return res.json({ user })
 }
