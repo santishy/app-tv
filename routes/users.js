@@ -32,25 +32,25 @@ router.post('/', [
     check('password', 'minimum length of 6 characters').isLength({ min: 6 }),
     check('email').custom(validateUniqueField('User', 'email')),
     check('username').custom(validateUniqueField('User', 'username')),
-    //  validateRequests
+    validateRequests
 ], createUser);
 
 router.put('/:id', [
-    // auth.verifyToken,
-    //    hasRole('admin'),
+    verifyToken,
+    hasRole('admin'),
     check('id', 'Is not a valid mongo id').isMongoId(),
     check('id').custom(theFieldExists('User', '_id')),
     check('username').custom(validateUniqueField('User', 'username')),
     check('email').custom(validateUniqueField('User', 'email')),
-    //  validateRequests
+    validateRequests
 ], updateUser);
 
 router.delete('/:id', [
-    //  verifyToken,
-    //hasRole('admin'),
+    verifyToken,
+    hasRole('admin'),
     check('id', 'Is not a valid mongo id').isMongoId(),
     check('id').custom(theFieldExists('User', '_id')),
-    //validateRequests
+    validateRequests
 ], deleteUser);
 
 module.exports = router;
