@@ -10,6 +10,5 @@ const validateRequests = (req, res, next) => {
     next();
 }
 
-module.exports = {
+module.exports =
     validateRequests
-}
