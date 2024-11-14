@@ -11,4 +11,4 @@ const validateRequests = (req, res, next) => {
 }
 
 module.exports =
-    validateRequests
+    { validateRequests }

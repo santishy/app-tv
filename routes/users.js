@@ -3,7 +3,8 @@ const { check, query } = require('express-validator');
 
 const { validateUniqueField, theFieldExists } = require('../helpers/database-validators');
 
-const { verifyToken,
+const {
+    verifyToken,
     hasRole,
     validateRequests } = require('../middlewares');
 
@@ -14,7 +15,7 @@ const { createUser, deleteUser, getUser, getUsers, updateUser } =
 // const { validateRequests } = require('../middlewares/validate-requests');
 // const { hasRole } = require('../middlewares/authorization');
 const router = Router();
-
+console.log({ validateRequests });
 router.get('/', [
     query('limit', 'The limit must be a positive integer').optional().isNumeric().isInt(),
     query('page', 'The page must be a positive integer').optional().isNumeric().isInt(),
