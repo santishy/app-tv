@@ -12,8 +12,8 @@ const categorySchema = Schema({
     },
 });
 
-userSchema.methods.toJSON = function () {
-    const { __v, _id, ...rest } = this.toObject();
+categorySchema.methods.toJSON = function () {
+    const { __v, _id, status, ...rest } = this.toObject();
     rest.uuid = _id;
     return rest;
 }

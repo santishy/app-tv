@@ -11,11 +11,9 @@ const {
 const { createUser, deleteUser, getUser, getUsers, updateUser } =
     require('../controllers/user.controller');
 
-// const { verifyToken } = require('../middlewares/auth')
-// const { validateRequests } = require('../middlewares/validate-requests');
-// const { hasRole } = require('../middlewares/authorization');
+
 const router = Router();
-console.log({ validateRequests });
+
 router.get('/', [
     query('limit', 'The limit must be a positive integer').optional().isNumeric().isInt(),
     query('page', 'The page must be a positive integer').optional().isNumeric().isInt(),

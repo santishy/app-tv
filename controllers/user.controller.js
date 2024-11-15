@@ -15,9 +15,8 @@ const getUsers = async (req, res = response) => {
             .limit(limit)
     ]);
     res.json({
-        data: [
-            users
-        ],
+        data:
+            users,
         meta: {
             total,
             per_page: limit,

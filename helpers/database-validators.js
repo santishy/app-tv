@@ -7,11 +7,16 @@ const validateUniqueField = (modelName = '', field = '') => {
         if (!model) {
             throw new Error(`The ${modelName} model does not exist`)
         }
-        const query = { [field]: value };
+
+        const query = { [field]: { $regex: new RegExp(`^${value}$`, 'i') } };
+
         if (req.params.id && (field != '_id')) {
+
             query._id = { $ne: req.params.id };
         }
+
         const exists = await model.findOne(query);
+        console.log({ exists });
         if (exists) {
             throw new Error(`${field} already exists.`)
         }
