@@ -21,23 +21,26 @@ const getCategory = async (req, res) => {
 const getCategories = async (req, res) => {
 
     const { page = 0, limit = 25 } = req.query;
-
-    const [categories, total] = await Promise.all([
-        Category.find({ status: true })
-            .limit(parseInt(limit))
-            .skip(parseInt(page)),
-        Category.countDocuments()
-    ]);
+    console.log({ page, limit })
+    const categories = await Category.find({ status: true })
+        .skip(Number(page))
+        .limit(Number(limit));
+    // const [total, categories] = await Promise.all([
+    //     Category.countDocuments(),
+    //     Category.find({ status: true })
+    //         .skip(Number(page))
+    //         .limit(Number(limit)),
+    // ]);
 
     return res.json({
         data:
             categories
         ,
-        meta: {
-            total,
-            per_page: limit,
-            page
-        }
+        // meta: {
+        //     total,
+        //     per_page: limit,
+        //     page
+        // }
     });
 }
 
