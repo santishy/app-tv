@@ -5,6 +5,11 @@ const productSchema = Schema({
         type: String,
         required: true,
     },
+    images: [{
+        url: {
+            type: String,
+        }
+    }],
     status: {
         type: Boolean,
         default: true
@@ -25,8 +30,8 @@ const productSchema = Schema({
         type: Schema.Types.ObjectId,
         ref: 'Category',
         required: true
-    }
-});
+    },
+}, { timestamps: true });
 
 productSchema.methods.toJSON = function () {
     const { __v, _id, password, ...rest } = this.toObject();

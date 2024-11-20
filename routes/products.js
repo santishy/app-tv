@@ -19,6 +19,7 @@ router.post('/',
         check('description', 'The description field is required').notEmpty(),
         check('categoryId', 'It is not a mongo id').isMongoId(),
         check('categoryId').custom(theFieldExists('Category', '_id')),
+        check('images.*.url', 'The URL field must be of type URL').optional().isURL(),
         check('price')
             .notEmpty()
             .withMessage('The price field is required')

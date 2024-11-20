@@ -27,8 +27,8 @@ const userSchema = Schema({
         type: String,
         enum: ['admin', 'user', 'guest'],
         default: 'user'
-    }
-});
+    },
+}, { timestamps: true });
 
 userSchema.methods.toJSON = function () {
     const { __v, _id, password, ...rest } = this.toObject();

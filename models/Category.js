@@ -10,7 +10,7 @@ const categorySchema = Schema({
         type: Boolean,
         default: true
     },
-});
+}, { timestamps: true });
 
 categorySchema.methods.toJSON = function () {
     const { __v, status, ...rest } = this.toObject();
