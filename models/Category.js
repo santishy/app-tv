@@ -13,8 +13,8 @@ const categorySchema = Schema({
 });
 
 categorySchema.methods.toJSON = function () {
-    const { __v, _id, status, ...rest } = this.toObject();
-    rest.uuid = _id;
+    const { __v, status, ...rest } = this.toObject();
+
     return rest;
 }
 

@@ -1,8 +1,26 @@
-const { response, request } = require('express')
+const { response, request } = require('express');
+const Product = require('../models/Product');
 
-const getProducts = (req, res = response) => {
-    const { page } = req.query;
-    res.json({ status: 'ok', page })
+const getProducts = async (req, res = response) => {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 25;
+    const [total, products] = await Promise.all([
+        Product.countDocuments(),
+        Product.find({ status: true })
+            .skip((page - 1) * limit)
+            .limit(limit),
+    ]);
+
+    return res.json({
+        data:
+            products
+        ,
+        meta: {
+            total,
+            per_page: limit,
+            page
+        }
+    });
 }
 
 const getProduct = () => {
@@ -17,10 +35,25 @@ const updateProduct = (req = request, res = response) => {
     })
 }
 
-const createProduct = (req = request, res = response) => {
-    const body = req.body;
+const createProduct = async (req = request, res = response) => {
 
-    res.json({ body })
+    const { title = '', description, price, model, categoryId } = req.body;
+
+    const product = new Product({
+        title: title.toUpperCase(),
+        description,
+        price,
+        model: model.toUpperCase(),
+        category: categoryId
+    });
+
+    await product.save();
+
+    const populatedProduct = await product.populate('category', 'name');
+
+    res.status(201).json(
+        { product: populatedProduct }
+    );
 }
 
 const deleteProduct = () => { }

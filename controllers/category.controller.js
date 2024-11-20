@@ -20,34 +20,31 @@ const getCategory = async (req, res) => {
 
 const getCategories = async (req, res) => {
 
-    const { page = 0, limit = 25 } = req.query;
-    console.log({ page, limit })
-    const categories = await Category.find({ status: true })
-        .skip(Number(page))
-        .limit(Number(limit));
-    // const [total, categories] = await Promise.all([
-    //     Category.countDocuments(),
-    //     Category.find({ status: true })
-    //         .skip(Number(page))
-    //         .limit(Number(limit)),
-    // ]);
+    const page = Number(req.query.page) || 1; // Por defecto, la página es 1
+    const limit = Number(req.query.limit) || 25;
+    const [total, categories] = await Promise.all([
+        Category.countDocuments(),
+        Category.find({ status: true })
+            .skip((page - 1) * limit)
+            .limit(limit),
+    ]);
 
     return res.json({
         data:
             categories
         ,
-        // meta: {
-        //     total,
-        //     per_page: limit,
-        //     page
-        // }
+        meta: {
+            total,
+            per_page: limit,
+            page
+        }
     });
 }
 
 const updateCategory = async (req, res) => {
     const { id } = req.params;
 
-    const { name = '' } = req.body;
+    const { name } = req.body;
 
     const category = await Category.findByIdAndUpdate(
         id, { name: name.toUpperCase() }, { new: true }
