@@ -23,8 +23,13 @@ const getProducts = async (req, res = response) => {
     });
 }
 
-const getProduct = () => {
+const getProduct = async (req = request, res = response) => {
+    const { id } = req.params;
 
+    const product = await Product.findById(id)
+        .populate({ path: 'category', select: 'name' });
+
+    return res.json(product)
 }
 
 const updateProduct = (req = request, res = response) => {

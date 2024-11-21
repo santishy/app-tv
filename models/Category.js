@@ -14,7 +14,6 @@ const categorySchema = Schema({
 
 categorySchema.methods.toJSON = function () {
     const { __v, status, ...rest } = this.toObject();
-
     return rest;
 }
 
