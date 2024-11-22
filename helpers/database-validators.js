@@ -52,17 +52,27 @@ const theFieldExists = (modelName, field) => {
 
 const productExists = async (title, { req }) => {
 
-    const model = req.body.model;
+    let model = req.body.model;
+
+    const { id } = req.params;
+
+    if (!model && id) {
+        const product = await Product.findById(id);
+        model = product.model;
+    }
 
     const query = {
         title: { $regex: new RegExp(`^${title}$`, 'i') },
         model: { $regex: new RegExp(`^${model}$`, 'i') }
     };
 
+    if (req.params.id) {
+        query._id = { $ne: req.params.id };
+    }
     const product = await Product.findOne(query);
 
     if (product) {
-        throw new Error(`A product with the title "${title}" and model "${model}" already exists.`);
+        throw new Error(`A product with the title: ${title} and model: ${model} already exists.`);
     }
 
     return true;

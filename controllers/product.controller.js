@@ -32,24 +32,30 @@ const getProduct = async (req = request, res = response) => {
     return res.json(product)
 }
 
-const updateProduct = (req = request, res = response) => {
+const updateProduct = async (req = request, res = response) => {
     const { id } = req.params;
-    res.json({
-        id,
-        msg: 'patch'
-    })
+    const { status, uuid, ...rest } = req.body;
+    if (rest.title) {
+        rest.title = rest.title.toUpperCase()
+    }
+    if (rest.model) {
+        rest.model = rest.model.toUpperCase();
+    }
+    const product = await Product.findByIdAndUpdate(id, rest, { new: true });
+
+    res.json(product)
 }
 
 const createProduct = async (req = request, res = response) => {
 
-    const { title = '', description, price, model, categoryId } = req.body;
+    const { title, description, price, model, category } = req.body;
 
     const product = new Product({
         title: title.toUpperCase(),
         description,
         price,
         model: model.toUpperCase(),
-        category: categoryId
+        category
     });
 
     await product.save();
@@ -61,7 +67,14 @@ const createProduct = async (req = request, res = response) => {
     );
 }
 
-const deleteProduct = () => { }
+const deleteProduct = async (req, res) => {
+    const { id } = req.body;
+    const product = await Product.findByIdAndUpdate(id, { status: false }, { new: true });
+
+    return res.status(204).json()
+
+
+}
 
 
 module.exports = {

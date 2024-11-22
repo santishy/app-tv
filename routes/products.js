@@ -24,8 +24,8 @@ router.post('/',
         check('model', 'The model field is required').notEmpty(),
         check('title').custom(productExists),
         check('description', 'The description field is required').notEmpty(),
-        check('categoryId', 'It is not a mongo id').isMongoId(),
-        check('categoryId').custom(theFieldExists('Category', '_id')),
+        check('category', 'It is not a mongo id').isMongoId(),
+        check('category').custom(theFieldExists('Category', '_id')),
         check('images.*.url', 'The URL field must be of type URL').optional().isURL(),
         check('price')
             .notEmpty()
@@ -37,20 +37,26 @@ router.post('/',
     , createProduct);
 router.patch('/:id', [
     verifyToken,
-    check('title', 'The title field is required').notEmpty(),
-    check('model', 'The model field is required').notEmpty(),
+    check('id', 'It is not a mongo id').isMongoId(),
+    check('id').custom(theFieldExists('Product', '_id')),
+
     check('title').custom(productExists),
-    check('description', 'The description field is required').notEmpty(),
-    check('categoryId', 'It is not a mongo id').isMongoId(),
-    check('categoryId').custom(theFieldExists('Category', '_id')),
+    check('category', 'It is not a mongo id').optional().isMongoId(),
+    check('category').optional().custom(theFieldExists('Category', '_id')),
     check('images.*.url', 'The URL field must be of type URL').optional().isURL(),
     check('price')
-        .notEmpty()
-        .withMessage('The price field is required')
+        .optional()
         .isNumeric()
         .withMessage('The price must be a number'),
     validateRequests
 ], updateProduct);
-router.delete('/:id', deleteProduct);
+
+router.delete('/:id', [
+    verifyToken,
+    hasRole('admin'),
+    check('id', 'It is not a mongo id').isMongoId(),
+    check('id').custom(theFieldExists('Product', '_id')),
+    validateRequests
+], deleteProduct);
 
 module.exports = router;

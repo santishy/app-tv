@@ -34,7 +34,7 @@ const productSchema = Schema({
 }, { timestamps: true });
 
 productSchema.methods.toJSON = function () {
-    const { __v, _id, password, ...rest } = this.toObject();
+    const { __v, _id, status, ...rest } = this.toObject();
     rest.uuid = _id;
     return rest;
 }
