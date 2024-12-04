@@ -26,7 +26,6 @@ class Server {
     this.app.use("/api/users/", require("../routes/users"));
     this.app.use("/api/auth/", require("../routes/auth"));
     this.app.use("/api/categories/", require("../routes/categories"));
-    this.app.use("/api/search/", require("../routes/search"));
   }
 
   listen() {
