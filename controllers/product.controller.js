@@ -1,12 +1,12 @@
 const { response, request } = require("express");
 const Product = require("../models/Product");
+const { uploadFile, deleteUploadedFiles } = require("../helpers/upload");
 
 const getProducts = async (req, res = response) => {
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 25;
 
   const query = { status: true, ...req.filters };
-  console.log(req.filters);
 
   const [total, products] = await Promise.all([
     Product.countDocuments(query),
@@ -39,12 +39,14 @@ const getProduct = async (req = request, res = response) => {
 const updateProduct = async (req = request, res = response) => {
   const { id } = req.params;
   const { status, uuid, ...rest } = req.body;
+
   if (rest.title) {
     rest.title = rest.title.toUpperCase();
   }
   if (rest.model) {
     rest.model = rest.model.toUpperCase();
   }
+
   const product = await Product.findByIdAndUpdate(id, rest, { new: true });
 
   res.json(product);
@@ -60,6 +62,12 @@ const createProduct = async (req = request, res = response) => {
     model: model.toUpperCase(),
     category,
   });
+
+  if (req.files.image) {
+    const results = await uploadFile(req.files.image, "products");
+    console.log(results);
+    product.images = results;
+  }
 
   await product.save();
 
