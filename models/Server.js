@@ -20,10 +20,10 @@ class Server {
   middlwares() {
     this.app.use(
       cors({
-        origin: "http://localhost:5173", // Dirección del frontend
-        methods: ["GET", "POST", "PATCH", "DELETE", "PUT"], // Métodos permitidos
-        allowedHeaders: ["Content-Type", "Authorization"], // Encabezados permitidos
-        credentials: true, // Permite el uso de cookies o Authorization
+        origin: "*", // IP pública del droplet
+        methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
+        allowedHeaders: ["Content-Type", "Authorization"],
+        credentials: true,
       })
     );
 
