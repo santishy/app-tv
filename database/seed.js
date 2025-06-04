@@ -13,7 +13,7 @@ const seedDatabase = async () => {
     const data = {
       name: "Usuario del sistema",
       username: "root",
-      password: "secret221",
+      password: "secret",
       email: "santi_shy@hotmail.com",
       role: "admin",
     };
