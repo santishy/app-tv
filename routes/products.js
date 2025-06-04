@@ -1,8 +1,8 @@
 const { Router } = require("express");
 
 const { check } = require("express-validator");
-const { productExists, theFieldExists, validateFiles } = require("../helpers");
-
+const { productExists, theFieldExists } = require("../helpers");
+const { validateFiles } = require("../middlewares/validate-files");
 const { validateRequests, verifyToken, hasRole } = require("../middlewares");
 const { handleFilters } = require("../middlewares/jsonApi/handle-filters");
 const Product = require("../models/Product");
@@ -16,6 +16,9 @@ const {
 } = require("../controllers/product.controller");
 
 const productImagesRouter = require("./product-images");
+const {
+  validateDimensionsImage,
+} = require("../middlewares/validate-image-dimensions");
 
 const router = Router();
 
@@ -24,9 +27,9 @@ router.use("/:id", productImagesRouter);
 router.get(
   "/",
   [
-    verifyToken,
+    // verifyToken,
     handleFilters(
-      ["title", "description", "model", "month", "category"],
+      ["title", "description", "model", "month", "category", "search"],
       Product.customFilters
     ),
     validateRequests,
@@ -47,23 +50,41 @@ router.post(
   "/",
   [
     verifyToken,
-    check("title", "The title field is required").notEmpty(),
-    check("model", "The model field is required").notEmpty(),
-    check("title").custom(productExists),
-    check("image").custom(
-      validateFiles(["jpg", "png", "jpeg", "git"], "image")
-    ),
-    check("description", "The description field is required").notEmpty(),
-    check("category", "It is not a mongo id").isMongoId(),
-    check("category").custom(theFieldExists("Category", "_id")),
-    check("images.*.url", "The URL field must be of type URL")
+    check("title").notEmpty().withMessage("El campo título es requerido."),
+    check("model").notEmpty().withMessage("El campo modelo es requerido."),
+    check("title")
+      .custom(productExists)
+      .withMessage("El producto ya existe en la base de datos."),
+    validateFiles(["jpg", "png", "jpeg", "git", "webp"], "images"),
+    validateDimensionsImage("images", { width: 1980, height: 1080 }),
+    // check("images")
+    //   .optional()
+    //   .custom(validateFiles(["jpg", "png", "jpeg", "git"], "images"))
+    //   .withMessage(
+    //     "La imagen no tiene la extensión correcta: jpg, png, jpeg, git"
+    //   ),
+    // check("images")
+    //   .custom(validateDimensionsImage(1980, 1080))
+    //   .withMessage("La imagen debe tener mínimo de: 1980x1080")
+    //   .optional(),
+    check("description")
+      .notEmpty()
+      .withMessage("El campo descripción es requerido."),
+    check("category")
+      .isMongoId()
+      .withMessage("El id categoría no es un ID valido."),
+    check("category")
+      .custom(theFieldExists("Category", "_id"))
+      .withMessage("El campo categoría no existe en la base de datos."),
+    check("images.*.url")
       .optional()
-      .isURL(),
+      .isURL()
+      .withMessage("El campo URL debe ser de tipo URL"),
     check("price")
       .notEmpty()
-      .withMessage("The price field is required")
+      .withMessage("El campo precio es requerido.")
       .isNumeric()
-      .withMessage("The price must be a number"),
+      .withMessage("El campo precio debe ser númerico."),
     validateRequests,
   ],
   createProduct
@@ -74,16 +95,41 @@ router.patch(
     verifyToken,
     check("id", "It is not a mongo id").isMongoId(),
     check("id").custom(theFieldExists("Product", "_id")),
-    check("title").custom(productExists),
-    check("category", "It is not a mongo id").optional().isMongoId(),
-    check("category").optional().custom(theFieldExists("Category", "_id")),
-    check("images.*.url", "The URL field must be of type URL")
-      .optional()
-      .isURL(),
+    check("title")
+      .notEmpty()
+      .withMessage("El campo título es requerido.")
+      .custom(productExists)
+      .withMessage("Este producto ya existe en la base de datos "),
+    check("model").notEmpty().withMessage("El campo modelo es requerido."),
+    check("category")
+      .notEmpty()
+      .withMessage("El campo categoría es requerido.")
+      .isMongoId()
+      .withMessage("El campo catogoría no es valido."),
+    check("category")
+      .custom(theFieldExists("Category", "_id"))
+      .withMessage("El campo categoría no existe en la base de datos."),
+    validateFiles(["jpg", "png", "jpeg", "git", "webp"], "images"),
+    validateDimensionsImage("images", { width: 1980, height: 1080 }),
+    // <check("images")
+    //   .custom(validateDimensionsImage(1980, 1080))
+    //   .withMessage("La imagen debe tener mínimo de: 1980x1080")
+    //   .optional(),>
+    // check("images")
+    //   .optional()
+    //   .custom(validateFiles(["jpg", "png", "jpeg", "git"], "images"))
+    //   .withMessage(
+    //     "La imagen no tiene la extensión correcta: jpg, png, jpeg, git"
+    //   ),
+    // check("images.*.url")
+    //   .optional()
+    //   .isURL()
+    //   .withMessage("El campo URL debe ser de tipo URL"),
     check("price")
-      .optional()
+      .notEmpty()
+      .withMessage("El campo precio es requerido.")
       .isNumeric()
-      .withMessage("The price must be a number"),
+      .withMessage("El campo precio debe ser númerico"),
     validateRequests,
   ],
   updateProduct

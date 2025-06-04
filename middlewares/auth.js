@@ -2,14 +2,15 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
 const verifyToken = async (req, res, next) => {
-  const token = req.header("Authorization");
+  const authorization = req.header("Authorization");
+
+  const token = authorization?.split(" ")[1];
   if (!token) {
     return res.status(401).json(getAuthenticationError("Invalid token"));
   }
 
   try {
     const { uuid } = jwt.verify(token, process.env.SECRET_OR_PRIVATE_KEY);
-    console.log("paso");
     const user = await User.findById(uuid);
 
     if (!user) {
@@ -29,7 +30,7 @@ const verifyToken = async (req, res, next) => {
     next();
   } catch (error) {
     console.log(error);
-    res.status(401).json(getAuthenticationError("Unauthenticated user"));
+    res.status(401).json(getAuthenticationError("Unexpected error"));
   }
 };
 

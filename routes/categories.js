@@ -1,48 +1,84 @@
-const { Router } = require('express')
-const { check, query } = require('express-validator');
+const { Router } = require("express");
+const { check, query } = require("express-validator");
 
-const { createCategory, deleteCategory, getCategories, getCategory, updateCategory } =
-    require('../controllers/category.controller');
-const { verifyToken, validateRequests, hasRole } = require('../middlewares');
-const { theFieldExists, validateUniqueField } = require('../helpers/database-validators');
+const {
+  createCategory,
+  deleteCategory,
+  getCategories,
+  getCategory,
+  updateCategory,
+} = require("../controllers/category.controller");
+const { verifyToken, validateRequests, hasRole } = require("../middlewares");
+const {
+  theFieldExists,
+  validateUniqueField,
+} = require("../helpers/database-validators");
+const { handleFilters } = require("../middlewares/jsonApi/handle-filters");
 
 const router = Router();
 
-router.get('/', [
+router.get(
+  "/",
+  [
     verifyToken,
-    query('limit', 'The limit must be a positive integer').optional().isNumeric().isInt(),
-    query('page', 'The page must be a positive integer').optional().isNumeric().isInt(),
-    validateRequests
-], getCategories);
-
-router.get('/:id', [
-    verifyToken,
-    check('id', 'It is not a mongo id').isMongoId(),
-    check('id').custom(theFieldExists('Category', '_id')),
+    handleFilters(["name"], {}),
+    query("limit", "The limit must be a positive integer")
+      .optional()
+      .isNumeric()
+      .isInt(),
+    query("page", "The page must be a positive integer")
+      .optional()
+      .isNumeric()
+      .isInt(),
     validateRequests,
-], getCategory);
+  ],
+  getCategories
+);
 
-router.post('/', [
+router.get(
+  "/:id",
+  [
     verifyToken,
-    check('name', 'The name field is required').notEmpty(),
-    check('name').custom(validateUniqueField('Category', 'name')),
+    check("id", "It is not a mongo id").isMongoId(),
+    check("id").custom(theFieldExists("Category", "_id")),
     validateRequests,
-], createCategory);
+  ],
+  getCategory
+);
 
-router.patch('/:id', [
+router.post(
+  "/",
+  [
     verifyToken,
-    check('id', 'It is not a mongo id').isMongoId(),
-    check('name', 'The name field is required').notEmpty(),
-    check('name').custom(validateUniqueField('Category', 'name')),
+    check("name", "The name field is required").notEmpty(),
+    check("name").custom(validateUniqueField("Category", "name")),
     validateRequests,
-], updateCategory);
+  ],
+  createCategory
+);
 
-router.delete('/:id', [
+router.patch(
+  "/:id",
+  [
     verifyToken,
-    hasRole('admin'),
-    check('id', 'It is not a mongo id').isMongoId(),
-    check('id').custom(theFieldExists('Category', '_id')),
-    validateRequests
-], deleteCategory);
+    check("id", "It is not a mongo id").isMongoId(),
+    check("name", "The name field is required").notEmpty(),
+    check("name").custom(validateUniqueField("Category", "name")),
+    validateRequests,
+  ],
+  updateCategory
+);
+
+router.delete(
+  "/:id",
+  [
+    verifyToken,
+    hasRole("admin"),
+    check("id", "It is not a mongo id").isMongoId(),
+    check("id").custom(theFieldExists("Category", "_id")),
+    validateRequests,
+  ],
+  deleteCategory
+);
 
 module.exports = router;

@@ -1,0 +1,14 @@
+{
+  "folders": [
+	{
+		"path": "../../app-tv-frontend"
+	},
+	{
+		"path": ".."
+	},
+	{
+		"path": "../../vue/vue-spa"
+	}
+],
+  "settings": {}
+}

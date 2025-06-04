@@ -18,7 +18,15 @@ class Server {
     await dbConnection();
   }
   middlwares() {
-    this.app.use(cors());
+    this.app.use(
+      cors({
+        origin: "http://localhost:5173", // Dirección del frontend
+        methods: ["GET", "POST", "PATCH", "DELETE", "PUT"], // Métodos permitidos
+        allowedHeaders: ["Content-Type", "Authorization"], // Encabezados permitidos
+        credentials: true, // Permite el uso de cookies o Authorization
+      })
+    );
+
     this.app.use(express.json());
     this.app.use(express.static("public"));
     this.app.use(express.urlencoded({ extended: true }));

@@ -8,11 +8,17 @@ const productSchema = Schema(
       required: true,
     },
     images: [
-      {
+      new Schema(
+        {
+          url: { type: String },
+        },
+        { id: false } // ❌ Evita que Mongoose agregue "_id" e "id" en cada imagen
+      ),
+      /*  {
         url: {
           type: String,
         },
-      },
+      }, */
     ],
     status: {
       type: Boolean,
@@ -36,11 +42,15 @@ const productSchema = Schema(
       required: true,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    // toJSON: { virtuals: true, id: false },
+    toObject: { virtuals: true, id: false },
+  }
 );
 
 productSchema.methods.toJSON = function () {
-  const { __v, _id, status, ...rest } = this.toObject();
+  const { __v, _id, id, status, ...rest } = this.toObject({ virtuals: true });
   rest.uuid = _id;
   return rest;
 };
@@ -49,6 +59,19 @@ productSchema.methods.hasRole = function (role) {
 };
 
 productSchema.statics.customFilters = {
+  search: (value) => {
+    const regEx = new RegExp(value, "i");
+    return {
+      $or: [
+        {
+          title: regEx,
+        },
+        {
+          description: regEx,
+        },
+      ],
+    };
+  },
   month: (value) => {
     const start = new Date(new Date().getFullYear(), value - 1, 1);
     const end = new Date(new Date().getFullYear(), value, 0);
@@ -67,4 +90,13 @@ productSchema.statics.customFilters = {
     return { category: new ObjectId(categoryId) };
   },
 };
+
+productSchema.virtual("fullImages").get(function () {
+  const baseUrl = process.env.BASE_URL;
+
+  return this.images.map((image) => ({
+    _id: image._id,
+    url: `${baseUrl}/images/products/${image.url}`,
+  }));
+});
 module.exports = model("Product", productSchema);

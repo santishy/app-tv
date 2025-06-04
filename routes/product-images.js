@@ -6,7 +6,11 @@ const {
   getProductImages,
 } = require("../controllers");
 const { verifyToken, validateRequests } = require("../middlewares");
-const { theFieldExists, validateFiles } = require("../helpers");
+const {
+  theFieldExists,
+  validateFiles,
+  validateDimensionsImage,
+} = require("../helpers");
 
 const router = Router({ mergeParams: true });
 
@@ -19,6 +23,7 @@ router.post(
     check("image").custom(
       validateFiles(["jpg", "png", "jpeg", "git"], "image")
     ),
+    check("image").custom(validateDimensionsImage(1980, 1080)),
     validateRequests,
   ],
   addImageToProduct

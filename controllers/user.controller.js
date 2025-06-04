@@ -23,8 +23,10 @@ const getUsers = async (req, res = response) => {
   });
 };
 
-const getUser = () => {
-  const user = new User();
+const getUser = async (req, res) => {
+  const { id } = req.params;
+  const user = await User.findById(id);
+  return res.json(user);
 };
 
 const updateUser = async (req = request, res = response) => {

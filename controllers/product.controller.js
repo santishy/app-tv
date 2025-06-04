@@ -3,7 +3,7 @@ const Product = require("../models/Product");
 const { uploadFile, deleteUploadedFiles } = require("../helpers/upload");
 
 const getProducts = async (req, res = response) => {
-  const page = Number(req.query.page) || 1;
+  const page = Math.max(1, Number(req.query.page) || 1);
   const limit = Number(req.query.limit) || 25;
 
   const query = { status: true, ...req.filters };
@@ -12,7 +12,9 @@ const getProducts = async (req, res = response) => {
     Product.countDocuments(query),
     Product.find(query)
       .skip((page - 1) * limit) // Saltar los documentos anteriores a la página actual
+      .populate("category", "name status")
       .limit(limit),
+    //.lean({ virtuals: true }),
   ]);
 
   return res.json({
@@ -38,6 +40,7 @@ const getProduct = async (req = request, res = response) => {
 
 const updateProduct = async (req = request, res = response) => {
   const { id } = req.params;
+
   const { status, uuid, ...rest } = req.body;
 
   if (rest.title) {
@@ -46,7 +49,10 @@ const updateProduct = async (req = request, res = response) => {
   if (rest.model) {
     rest.model = rest.model.toUpperCase();
   }
-
+  if (req.files?.images) {
+    const results = await uploadFile(req.files.images, "products");
+    rest.images = results;
+  }
   const product = await Product.findByIdAndUpdate(id, rest, { new: true });
 
   res.json(product);
@@ -63,9 +69,8 @@ const createProduct = async (req = request, res = response) => {
     category,
   });
 
-  if (req.files.image) {
-    const results = await uploadFile(req.files.image, "products");
-    console.log(results);
+  if (req.files?.images) {
+    const results = await uploadFile(req.files.images, "products");
     product.images = results;
   }
 
@@ -77,13 +82,15 @@ const createProduct = async (req = request, res = response) => {
 };
 
 const deleteProduct = async (req, res) => {
-  const { id } = req.body;
+  const { id } = req.params;
   const product = await Product.findByIdAndUpdate(
     id,
     { status: false },
     { new: true }
   );
-
+  if (!product) {
+    return res.status(404).json({ error: "Product not found" });
+  }
   return res.status(204).json();
 };
 

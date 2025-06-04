@@ -1,7 +1,8 @@
 const handleFilters = (allowedFilters, customFilters) => (req, res, next) => {
   const { filter = {} } = req.query;
 
-  req.filters = Object.entries(filter).reduce((acc, [key, value]) => {
+  req.filters = {};
+  for (const [key, value] of Object.entries(filter)) {
     if (!allowedFilters.includes(key)) {
       return res.status(400).json({
         errors: [
@@ -13,13 +14,13 @@ const handleFilters = (allowedFilters, customFilters) => (req, res, next) => {
     }
     try {
       if (customFilters[key]) {
-        acc = { ...acc, ...customFilters[key](value) };
+        // req.filters = { ...req.filters, ...customFilters[key](value) };
+        Object.assign(req.filters, customFilters[key](value));
       } else {
-        acc[key] = new RegExp(value, "i");
+        req.filters[key] = new RegExp(value, "i");
       }
-      return acc;
     } catch (error) {
-      res.status(400).json({
+      return res.status(400).json({
         errors: [
           {
             message: error.message,
@@ -27,7 +28,7 @@ const handleFilters = (allowedFilters, customFilters) => (req, res, next) => {
         ],
       });
     }
-  }, {});
+  }
   next();
 };
 
