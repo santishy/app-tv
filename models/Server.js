@@ -18,15 +18,24 @@ class Server {
     await dbConnection();
   }
   middlwares() {
+    const allowedOrigins = ["https://saeseg.app", "http://localhost:5173"];
+
     this.app.use(
       cors({
-        origin: "*", // IP pública del droplet
+        origin: function (origin, callback) {
+          // Permitir solicitudes sin origen (como Postman o curl)
+          if (!origin) return callback(null, true);
+          if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+          } else {
+            return callback(new Error("CORS policy: Origin not allowed"));
+          }
+        },
+        credentials: true,
         methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
         allowedHeaders: ["Content-Type", "Authorization"],
-        credentials: true,
       })
     );
-
     this.app.use(express.json());
     this.app.use(express.static("public"));
     this.app.use(express.urlencoded({ extended: true }));
