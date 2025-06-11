@@ -18,7 +18,6 @@ class Server {
     await dbConnection();
   }
   middlwares() {
-    this.app.use(express.json());
     const allowedOrigins = ["https://saeseg.app", "http://localhost:5173"];
 
     this.app.use(
@@ -38,6 +37,9 @@ class Server {
       })
     );
     this.app.options("*", cors());
+    const express = require("express");
+    this.app.use(express.json());
+
     this.app.use(express.static("public"));
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(

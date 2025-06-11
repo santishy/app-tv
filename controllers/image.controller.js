@@ -3,8 +3,13 @@ const path = require("path");
 
 const serveImage = async (req, res) => {
   const { collection, name } = req.params;
-  const imagePath = path.join(__dirname, "../uploads/", collection, name);
-
+  const imagePath = path.join(
+    process.env.UPLOAD_PATH,
+    "uploads",
+    collection,
+    name
+  );
+  console.log("imagePath: ", imagePath);
   if (fs.existsSync(imagePath)) {
     return res.sendFile(imagePath);
   }

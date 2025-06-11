@@ -10,7 +10,7 @@ const deleteUploadedFiles = (images = [], folder = "") => {
   return new Promise((resolve, reject) => {
     try {
       images.forEach((image) => {
-        const uploadPath = path.join(__dirname, "../uploads/", folder, image);
+        const uploadPath = path.join(__dirname, "./uploads/", folder, image);
         if (fs.existsSync(uploadPath)) {
           fs.unlinkSync(uploadPath);
         }
@@ -28,22 +28,25 @@ const uploadFile = (files, folder = "") => {
     const errors = [];
 
     const fileList = Array.isArray(files) ? files : [files];
-
+    console.log("dirname", __dirname);
     for (const file of fileList) {
       const fileName = uuidv4();
       //const extension = getExtension(file.name);
       const uploadPath = path.join(
-        __dirname,
-        "../uploads/",
+        process.env.UPLOAD_PATH, //aquí iba __dirname
+        "uploads",
         folder,
-        fileName + "." + "jpeg" //+ extension
+        fileName + "." + "webp" //+ extension
       );
       tempPath = file.tempFilePath;
 
       if (!fs.existsSync(uploadFile)) {
-        fs.mkdirSync(path.join(__dirname, "../uploads/", folder), {
-          recursive: true,
-        });
+        fs.mkdirSync(
+          path.join(process.env.UPLOAD_PATH, "./uploads/", folder), //PRIMER parámetro era __dirname
+          {
+            recursive: true,
+          }
+        );
       }
       // file.mv(uploadPath, (err) => {
       //   errors.push(err);
@@ -65,7 +68,7 @@ const uploadFile = (files, folder = "") => {
           }
         });
       // results.push({ url: fileName + "." + extension });
-      results.push({ url: fileName + ".jpeg" });
+      results.push({ url: fileName + ".webp" });
     }
 
     if (errors.length) {

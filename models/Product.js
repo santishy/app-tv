@@ -93,7 +93,6 @@ productSchema.statics.customFilters = {
 
 productSchema.virtual("fullImages").get(function () {
   const baseUrl = process.env.BASE_URL;
-
   return this.images.map((image) => ({
     _id: image._id,
     url: `${baseUrl}/images/products/${image.url}`,
