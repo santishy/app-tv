@@ -6,11 +6,11 @@ const {
   getProductImages,
 } = require("../controllers");
 const { verifyToken, validateRequests } = require("../middlewares");
+const { theFieldExists } = require("../helpers");
+const { validateFiles } = require("../middlewares/validate-files");
 const {
-  theFieldExists,
-  validateFiles,
   validateDimensionsImage,
-} = require("../helpers");
+} = require("../middlewares/validate-image-dimensions");
 
 const router = Router({ mergeParams: true });
 
@@ -20,10 +20,8 @@ router.post(
     verifyToken,
     check("id", "It is not a mongo id").isMongoId(),
     check("id").custom(theFieldExists("Product", "_id")),
-    check("image").custom(
-      validateFiles(["jpg", "png", "jpeg", "git"], "image")
-    ),
-    check("image").custom(validateDimensionsImage(1980, 1080)),
+    validateFiles(["jpg", "png", "jpeg", "git", "webp"], "images"),
+    validateDimensionsImage("images", { width: 800, height: 800 }),
     validateRequests,
   ],
   addImageToProduct

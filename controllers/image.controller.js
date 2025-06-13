@@ -9,7 +9,7 @@ const serveImage = async (req, res) => {
     collection,
     name
   );
-  console.log("imagePath: ", imagePath);
+
   if (fs.existsSync(imagePath)) {
     return res.sendFile(imagePath);
   }
