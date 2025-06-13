@@ -110,7 +110,7 @@ router.patch(
       .custom(theFieldExists("Category", "_id"))
       .withMessage("El campo categoría no existe en la base de datos."),
     validateFiles(["jpg", "png", "jpeg", "git", "webp"], "images"),
-    validateDimensionsImage("images", { width: 800, height: 800 }),
+    validateDimensionsImage("images", { width: 1980, height: 1080 }),
     // <check("images")
     //   .custom(validateDimensionsImage(1980, 1080))
     //   .withMessage("La imagen debe tener mínimo de: 1980x1080")

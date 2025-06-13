@@ -15,7 +15,7 @@ const validateDimensionsImage =
         errors.push({
           msg: `La imagen: "${file.name}" debe tener como minímo un ancho y alto de: ${width} X ${height}`,
         });
-        return false;
+        return true;
       })
     );
     console.log(invalidImages);
