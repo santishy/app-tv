@@ -1,10 +1,15 @@
 const bcryptjs = require("bcryptjs");
 const User = require("../models/User");
+const Category = require("../models/Category")
+const Product = require("../models/Product")
 const { dbConnection } = require("./config");
 const mongoose = require("mongoose");
 const seedDatabase = async () => {
   try {
     await connect();
+    await Product.deleteMany({})
+    await User.deleteMany({});
+    await Category.deleteMany({});
     const count = await User.countDocuments();
     if (count > 0) {
       console.log("Ya existe un o más usuarios");

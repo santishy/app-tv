@@ -4,7 +4,7 @@ const path = require("path");
 const sharp = require("sharp");
 
 const { v4: uuidv4 } = require("uuid");
-const { getExtension } = require("./validate-uploaded-file");
+//const { getExtension } = require("./validate-uploaded-file");
 
 const deleteUploadedFiles = (images = [], folder = "") => {
   return new Promise((resolve, reject) => {
@@ -28,7 +28,7 @@ const uploadFile = (files, folder = "") => {
     const errors = [];
 
     const fileList = Array.isArray(files) ? files : [files];
-    console.log("dirname", __dirname);
+   
     for (const file of fileList) {
       const fileName = uuidv4();
       //const extension = getExtension(file.name);
@@ -59,8 +59,8 @@ const uploadFile = (files, folder = "") => {
           fit: "contain",
           background: { r: 255, g: 255, b: 255 },
         })
-        .toFormat("jpeg")
-        .jpeg({ quality: 80 })
+        .toFormat("webp")
+        .webp({ quality: 85 })
         .toFile(uploadPath, (err) => {
           if (err) {
             console.log(err);
