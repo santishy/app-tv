@@ -57,7 +57,7 @@ const uploadFile = (files, folder = "") => {
           height: 1080,
           withoutEnlargement: false,
           fit: "contain",
-          background: { r: 255, g: 255, b: 255 },
+          background: { r: 241, g: 245, b: 249 },
         })
         .toFormat("webp")
         .webp({ quality: 85 })

@@ -8,22 +8,23 @@ const validateDimensionsImage =
     const files = getFileArray(req, fieldName);
     const invalidImages = await Promise.all(
       files.map(async (file) => {
-        const dimensions = await sharp(file.tempFilePath).metadata(); //al quitar en model Server.js el useTempFiles:true y ponerlo en false hay que cambiarlo por file.tempFilePath por file.data
-        if (dimensions.width >= width || dimensions.height >= height) {
-          return false;
+        const {width: imgWidth,height: imgHeight} = await sharp(file.tempFilePath).metadata(); //al quitar en model Server.js el useTempFiles:true y ponerlo en false hay que cambiarlo por file.tempFilePath por file.data
+        let message = null;
+        if(imgWidth < width || imgHeight < height){
+           message = `La imagen ${file.name} es demasiado pequeña, debe tener un mínimo de ${width}X${height}`;
         }
-        errors.push({
-          msg: `La imagen: "${file.name}" debe tener como minímo un ancho y alto de: ${width} X ${height}`,
-        });
-        return true;
+        if(imgWidth < imgHeight || imgHeight === imgWidth){
+          message = `La imagen ${file.name} debe ser horizontal (mas ancha que alta). Actual ${imgWidth}X${imgHeight}`;
+        }
+        if(message){
+          errors.push({msg: message})
+          return true;
+        }
+        return false;
       })
     );
-    console.log(invalidImages);
     if (invalidImages.includes(true)) {
       return res.status(422).json({ errors });
-      //   throw new Error(
-      //     `The images must have a width and height: ${width} X ${height}`
-      //   );
     }
     return next();
   };
