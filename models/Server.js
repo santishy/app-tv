@@ -36,7 +36,7 @@ class Server {
         allowedHeaders: ["Content-Type", "Authorization"],
       })
     );
-    const express = require("express");
+    //const express = require("express");
     this.app.use(express.json());
 
     this.app.use(express.static("public"));
