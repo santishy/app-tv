@@ -24,19 +24,18 @@ class Server {
       cors({
         origin: function (origin, callback) {
           // Permitir solicitudes sin origen (como Postman o curl)
-          if (!origin) return callback(null, true);
-          if (allowedOrigins.includes(origin)) {
+          console.log(origin)
+          if (!origin || allowedOrigins.includes(origin)) {
             return callback(null, true);
           } else {
             return callback(new Error("CORS policy: Origin not allowed"));
           }
         },
         credentials: true,
-        methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
+        methods: ["GET", "POST", "PATCH", "DELETE", "PUT","OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization"],
       })
     );
-    this.app.options("*", cors());
     const express = require("express");
     this.app.use(express.json());
 
