@@ -26,6 +26,7 @@ class Server {
           // Permitir solicitudes sin origen (como Postman o curl)
           console.log(origin)
           if (!origin || allowedOrigins.includes(origin)) {
+            console.log("entro aki")
             return callback(null, true);
           } else {
             return callback(new Error("CORS policy: Origin not allowed"));
