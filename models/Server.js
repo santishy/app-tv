@@ -47,7 +47,7 @@ class Server {
         useTempFiles: true,
         tempFileDir: "/tmp/",
         createParentPath: true,
-        limits: { fileSize: 20 * 1024 * 1024 } // 20 MB
+        limits: { fileSize: 50 * 1024 * 1024 } // 50 MB
       })
     );
   }
