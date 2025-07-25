@@ -53,8 +53,8 @@ const uploadFile = (files, folder = "") => {
       // });
       sharp(tempPath)
         .resize({
-          width: 1920,
-          height: 1080,
+          width: 720,
+          height: 360,
           withoutEnlargement: false,
           fit: "cover",
           position: "center",
