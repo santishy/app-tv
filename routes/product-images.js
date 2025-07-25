@@ -21,7 +21,7 @@ router.post(
     check("id", "It is not a mongo id").isMongoId(),
     check("id").custom(theFieldExists("Product", "_id")),
     validateFiles(["jpg", "png", "jpeg", "git", "webp"], "images"),
-    validateDimensionsImage("images", { width: 1920, height: 1080 }),
+    validateDimensionsImage("images", { width: 720, height: 360 }),
     validateRequests,
   ],
   addImageToProduct
