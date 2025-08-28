@@ -18,12 +18,7 @@ class Server {
     await dbConnection();
   }
   middlwares() {
-    const allowedOrigins = [
-      'https://saeseg.app',
-      'https://www.saeseg.app',
-      'http://localhost:5173',
-      'http://localhost:4173',
-    ];
+    const allowedOrigins = ['https://saeseg.app', 'http://localhost:5173'];
 
     this.app.use(
       cors({
