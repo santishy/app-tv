@@ -8,11 +8,7 @@ const router = Router();
 
 router.get(
   '/:id',
-  [
-    verifyToken,
-    check('id').equals('singleton').withMessage('Invalid store settings ID'),
-    validateRequests,
-  ],
+  [check('id').equals('singleton').withMessage('Invalid store settings ID'), validateRequests],
   getStoreSettings,
 );
 

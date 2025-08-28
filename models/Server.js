@@ -19,6 +19,10 @@ class Server {
   }
   middlwares() {
     const allowedOrigins = ['https://saeseg.app', 'http://localhost:5173'];
+    this.app.use((req, _res, next) => {
+      console.log('CORS → Origin:', req.headers.origin, '| URL:', req.method, req.originalUrl);
+      next();
+    });
 
     this.app.use(
       cors({
