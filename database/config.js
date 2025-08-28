@@ -2,9 +2,8 @@ const mongoose = require('mongoose');
 
 const dbConnection = async () => {
   try {
-    const uri =
-      process.env.MONGODB_CNN ?? //"mongodb://localhost:27017/app_tv";
-      'mongodb+srv://santishy:Sm10.Mg10@cluster0.c30jf.mongodb.net/app_tv';
+    const uri = process.env.MONGODB_CNN ?? 'mongodb://localhost:27017/app_tv';
+    //'mongodb+srv://santishy:Sm10.Mg10@cluster0.c30jf.mongodb.net/app_tv';
     await mongoose.connect(uri);
     console.log('Online database');
   } catch (error) {
