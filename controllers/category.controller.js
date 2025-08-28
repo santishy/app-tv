@@ -1,5 +1,5 @@
-const { request, response } = require("express");
-const { Category } = require("../models");
+const { request, response } = require('express');
+const { Category } = require('../models');
 
 const createCategory = async (req = request, res = response) => {
   const { name } = req.body;
@@ -45,7 +45,7 @@ const updateCategory = async (req, res) => {
   const category = await Category.findByIdAndUpdate(
     id,
     { name: name.toUpperCase() },
-    { new: true }
+    { new: true },
   );
 
   return res.json({

@@ -1,8 +1,8 @@
-const { request, response } = require("express");
-const { default: mongoose } = require("mongoose");
-const Product = require("../models/Product");
+const { request, response } = require('express');
+const { default: mongoose } = require('mongoose');
+const Product = require('../models/Product');
 
-const validateUniqueField = (modelName = "", field = "") => {
+const validateUniqueField = (modelName = '', field = '') => {
   return async (value, { req }) => {
     const model = mongoose.model(modelName);
 
@@ -10,9 +10,9 @@ const validateUniqueField = (modelName = "", field = "") => {
       throw new Error(`The ${modelName} model does not exist`);
     }
 
-    const query = { [field]: { $regex: new RegExp(`^${value}$`, "i") } };
+    const query = { [field]: { $regex: new RegExp(`^${value}$`, 'i') } };
 
-    if (req.params.id && field != "_id") {
+    if (req.params.id && field != '_id') {
       query._id = { $ne: req.params.id };
     }
 
@@ -34,7 +34,7 @@ const theFieldExists = (modelName, field) => {
     }
     const query = { [field]: value };
 
-    if (req.params.id && field != "_id") {
+    if (req.params.id && field != '_id') {
       query._id = { $ne: req.params.id };
     }
 
@@ -59,8 +59,8 @@ const productExists = async (title, { req }) => {
   }
 
   const query = {
-    title: { $regex: new RegExp(`^${title}$`, "i") },
-    model: { $regex: new RegExp(`^${model}$`, "i") },
+    title: { $regex: new RegExp(`^${title}$`, 'i') },
+    model: { $regex: new RegExp(`^${model}$`, 'i') },
   };
 
   if (req.params.id) {
@@ -69,9 +69,7 @@ const productExists = async (title, { req }) => {
   const product = await Product.findOne(query);
 
   if (product) {
-    throw new Error(
-      `A product with the title: ${title} and model: ${model} already exists.`
-    );
+    throw new Error(`A product with the title: ${title} and model: ${model} already exists.`);
   }
 
   return true;

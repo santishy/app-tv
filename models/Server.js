@@ -1,7 +1,7 @@
-const express = require("express");
-const cors = require("cors");
-const { dbConnection } = require("../database/config");
-const fileUpload = require("express-fileupload");
+const express = require('express');
+const cors = require('cors');
+const { dbConnection } = require('../database/config');
+const fileUpload = require('express-fileupload');
 class Server {
   constructor() {
     this.app = express();
@@ -18,50 +18,50 @@ class Server {
     await dbConnection();
   }
   middlwares() {
-    const allowedOrigins = ["https://saeseg.app", "http://localhost:5173"];
+    const allowedOrigins = ['https://saeseg.app', 'http://localhost:5173'];
 
     this.app.use(
       cors({
         origin: function (origin, callback) {
           // Permitir solicitudes sin origen (como Postman o curl)
-          console.log(origin)
+
           if (!origin || allowedOrigins.includes(origin)) {
-            console.log("entro aki")
             return callback(null, true);
           } else {
-            return callback(new Error("CORS policy: Origin not allowed"));
+            return callback(new Error('CORS policy: Origin not allowed'));
           }
         },
         credentials: true,
-        methods: ["GET", "POST", "PATCH", "DELETE", "PUT","OPTIONS"],
-        allowedHeaders: ["Content-Type", "Authorization"],
-      })
+        methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
+      }),
     );
     //const express = require("express");
     this.app.use(express.json());
 
-    this.app.use(express.static("public"));
+    this.app.use(express.static('public'));
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(
       fileUpload({
         useTempFiles: true,
-        tempFileDir: "/tmp/",
+        tempFileDir: '/tmp/',
         createParentPath: true,
-        limits: { fileSize: 50 * 1024 * 1024 } // 50 MB
-      })
+        limits: { fileSize: 50 * 1024 * 1024 }, // 50 MB
+      }),
     );
   }
   routes() {
-    this.app.use("/api/products/", require("../routes/products"));
-    this.app.use("/api/users/", require("../routes/users"));
-    this.app.use("/api/auth/", require("../routes/auth"));
-    this.app.use("/api/categories/", require("../routes/categories"));
-    this.app.use("/images/", require("../routes/images"));
+    this.app.use('/api/products/', require('../routes/products'));
+    this.app.use('/api/users/', require('../routes/users'));
+    this.app.use('/api/auth/', require('../routes/auth'));
+    this.app.use('/api/categories/', require('../routes/categories'));
+    this.app.use('/images/', require('../routes/images'));
+    this.app.use('/api/store-settings/', require('../routes/store-settings'));
   }
 
   listen() {
     this.app.listen(process.env.PORT, () => {
-      console.log("server running in port " + this.port);
+      console.log('server running in port ' + this.port);
     });
   }
 }

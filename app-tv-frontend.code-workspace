@@ -1,11 +1,11 @@
 {
-	"folders": [
-		{
-			"path": "../app-tv-frontend"
-		},
-		{
-			"path": "."
-		}
-	],
-	"settings": {}
+  "folders": [
+    {
+      "path": "../app-tv-frontend",
+    },
+    {
+      "path": ".",
+    },
+  ],
+  "settings": {},
 }

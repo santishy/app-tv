@@ -1,6 +1,6 @@
-const { model, Schema } = require("mongoose");
-const { ObjectId } = require("mongoose").Types;
-const dayjs = require("dayjs");
+const { model, Schema } = require('mongoose');
+const { ObjectId } = require('mongoose').Types;
+const dayjs = require('dayjs');
 const productSchema = Schema(
   {
     title: {
@@ -12,7 +12,7 @@ const productSchema = Schema(
         {
           url: { type: String },
         },
-        { id: false } // ❌ Evita que Mongoose agregue "_id" e "id" en cada imagen
+        { id: false }, // ❌ Evita que Mongoose agregue "_id" e "id" en cada imagen
       ),
       /*  {
         url: {
@@ -26,7 +26,7 @@ const productSchema = Schema(
     },
     model: {
       type: String,
-      default: "Genérico",
+      default: 'Genérico',
     },
     price: {
       type: Number,
@@ -38,7 +38,7 @@ const productSchema = Schema(
     },
     category: {
       type: Schema.Types.ObjectId,
-      ref: "Category",
+      ref: 'Category',
       required: true,
     },
   },
@@ -46,7 +46,7 @@ const productSchema = Schema(
     timestamps: true,
     // toJSON: { virtuals: true, id: false },
     toObject: { virtuals: true, id: false },
-  }
+  },
 );
 
 productSchema.methods.toJSON = function () {
@@ -60,7 +60,7 @@ productSchema.methods.hasRole = function (role) {
 
 productSchema.statics.customFilters = {
   search: (value) => {
-    const regEx = new RegExp(value, "i");
+    const regEx = new RegExp(value, 'i');
     return {
       $or: [
         {
@@ -91,11 +91,11 @@ productSchema.statics.customFilters = {
   },
 };
 
-productSchema.virtual("fullImages").get(function () {
+productSchema.virtual('fullImages').get(function () {
   const baseUrl = process.env.BASE_URL;
   return this.images.map((image) => ({
     _id: image._id,
     url: `${baseUrl}/images/products/${image.url}`,
   }));
 });
-module.exports = model("Product", productSchema);
+module.exports = model('Product', productSchema);

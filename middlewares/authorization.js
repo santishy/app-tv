@@ -4,7 +4,7 @@ const hasRole = (...roles) => {
       return res.status(500).json({
         errors: [
           {
-            message: "The user does not exist",
+            message: 'The user does not exist',
           },
         ],
       });

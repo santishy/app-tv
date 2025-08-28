@@ -17,7 +17,7 @@ const handleFilters = (allowedFilters, customFilters) => (req, res, next) => {
         // req.filters = { ...req.filters, ...customFilters[key](value) };
         Object.assign(req.filters, customFilters[key](value));
       } else {
-        req.filters[key] = new RegExp(value, "i");
+        req.filters[key] = new RegExp(value, 'i');
       }
     } catch (error) {
       return res.status(400).json({

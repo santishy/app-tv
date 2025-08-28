@@ -1,4 +1,4 @@
-const { getExtension, getFileArray } = require("./validate-image-dimensions");
+const { getExtension, getFileArray } = require('./validate-image-dimensions');
 
 const validateFiles = (allowedExtensions, name) => (req, res, next) => {
   if (!req.files || !req.files[name]) {
@@ -7,14 +7,10 @@ const validateFiles = (allowedExtensions, name) => (req, res, next) => {
   }
   const files = getFileArray(req, name);
 
-  const invalidFiles = files.filter(
-    (file) => !allowedExtensions.includes(getExtension(file.name))
-  );
+  const invalidFiles = files.filter((file) => !allowedExtensions.includes(getExtension(file.name)));
 
   if (invalidFiles.length) {
-    const invalidFilesNames = invalidFiles
-      .map((file) => getExtension(file.name))
-      .join(", ");
+    const invalidFilesNames = invalidFiles.map((file) => getExtension(file.name)).join(', ');
     return res.status(422).json({
       errors: [
         {

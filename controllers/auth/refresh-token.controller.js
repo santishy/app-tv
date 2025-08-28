@@ -1,4 +1,4 @@
-const { generateToken } = require("../../helpers/index");
+const { generateToken } = require('../../helpers/index');
 
 const refreshToken = async (req, res) => {
   const user = req.user;

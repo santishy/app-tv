@@ -1,28 +1,25 @@
-const jwt = require("jsonwebtoken");
-const User = require("../models/User");
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
 const verifyToken = async (req, res, next) => {
-  const authorization = req.header("Authorization");
+  const authorization = req.header('Authorization');
 
-  const token = authorization?.split(" ")[1];
+  const token = authorization?.split(' ')[1];
+
   if (!token) {
-    return res.status(401).json(getAuthenticationError("Invalid token"));
+    return res.status(401).json(getAuthenticationError('Invalid token'));
   }
 
   try {
     const { uuid } = jwt.verify(token, process.env.SECRET_OR_PRIVATE_KEY);
-    const user = await User.findById(uuid);
 
+    const user = await User.findById(uuid);
     if (!user) {
-      return res
-        .status(401)
-        .json(getAuthenticationError("The user does not exist"));
+      return res.status(401).json(getAuthenticationError('The user does not exist'));
     }
 
     if (!user.status) {
-      return res
-        .status(401)
-        .json(getAuthenticationError("Unauthenticated user"));
+      return res.status(401).json(getAuthenticationError('Unauthenticated user'));
     }
 
     req.user = user;
@@ -30,7 +27,7 @@ const verifyToken = async (req, res, next) => {
     next();
   } catch (error) {
     console.log(error);
-    res.status(401).json(getAuthenticationError("Unexpected error"));
+    res.status(401).json(getAuthenticationError('Unexpected error'));
   }
 };
 

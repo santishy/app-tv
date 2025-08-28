@@ -1,7 +1,7 @@
-const { request, response } = require("express");
-const bcryptjs = require("bcryptjs");
-const User = require("../../models/User");
-const { generateToken } = require("../../helpers/jwt");
+const { request, response } = require('express');
+const bcryptjs = require('bcryptjs');
+const User = require('../../models/User');
+const { generateToken } = require('../../helpers/jwt');
 
 const login = async (req = request, res = response, next) => {
   const { username, password } = req.body;
@@ -16,7 +16,7 @@ const login = async (req = request, res = response, next) => {
   const validPassword = bcryptjs.compareSync(password, user.password);
   if (!validPassword) {
     return res.status(401).json({
-      errors: [{ message: "Credentials are incorrect. Password/Username" }],
+      errors: [{ message: 'Credentials are incorrect. Password/Username' }],
     });
   }
 

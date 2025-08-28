@@ -1,6 +1,6 @@
-const { response, request } = require("express");
-const bcryptjs = require("bcryptjs");
-const User = require("../models/User");
+const { response, request } = require('express');
+const bcryptjs = require('bcryptjs');
+const User = require('../models/User');
 
 const getUsers = async (req, res = response) => {
   const { page = 1, limit = 5 } = req.query;
@@ -38,7 +38,7 @@ const updateUser = async (req = request, res = response) => {
       const salt = bcryptjs.genSaltSync();
       rest.password = bcryptjs.hashSync(password, salt);
     }
-    if (role && req.user.hasRole("admin")) {
+    if (role && req.user.hasRole('admin')) {
       rest.role = role;
     }
     user = await User.findByIdAndUpdate(id, rest, { new: true });
@@ -47,7 +47,7 @@ const updateUser = async (req = request, res = response) => {
     return res.json({
       errors: [
         {
-          message: "Error updating user",
+          message: 'Error updating user',
         },
       ],
     });

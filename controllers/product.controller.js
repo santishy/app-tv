@@ -1,6 +1,6 @@
-const { response, request } = require("express");
-const Product = require("../models/Product");
-const { uploadFile, deleteUploadedFiles } = require("../helpers/upload");
+const { response, request } = require('express');
+const Product = require('../models/Product');
+const { uploadFile, deleteUploadedFiles } = require('../helpers/upload');
 
 const getProducts = async (req, res = response) => {
   const page = Math.max(1, Number(req.query.page) || 1);
@@ -12,7 +12,7 @@ const getProducts = async (req, res = response) => {
     Product.countDocuments(query),
     Product.find(query)
       .skip((page - 1) * limit) // Saltar los documentos anteriores a la página actual
-      .populate("category", "name status")
+      .populate('category', 'name status')
       .limit(limit),
     //.lean({ virtuals: true }),
   ]);
@@ -31,8 +31,8 @@ const getProduct = async (req = request, res = response) => {
   const { id } = req.params;
 
   const product = await Product.findById(id).populate({
-    path: "category",
-    select: "name",
+    path: 'category',
+    select: 'name',
   });
 
   return res.json(product);
@@ -50,7 +50,7 @@ const updateProduct = async (req = request, res = response) => {
     rest.model = rest.model.toUpperCase();
   }
   if (req.files?.images) {
-    const results = await uploadFile(req.files.images, "products");
+    const results = await uploadFile(req.files.images, 'products');
     rest.images = results;
   }
   const product = await Product.findByIdAndUpdate(id, rest, { new: true });
@@ -70,26 +70,22 @@ const createProduct = async (req = request, res = response) => {
   });
 
   if (req.files?.images) {
-    const results = await uploadFile(req.files.images, "products");
+    const results = await uploadFile(req.files.images, 'products');
     product.images = results;
   }
 
   await product.save();
 
-  const populatedProduct = await product.populate("category", "name");
+  const populatedProduct = await product.populate('category', 'name');
 
   res.status(201).json({ product: populatedProduct });
 };
 
 const deleteProduct = async (req, res) => {
   const { id } = req.params;
-  const product = await Product.findByIdAndUpdate(
-    id,
-    { status: false },
-    { new: true }
-  );
+  const product = await Product.findByIdAndUpdate(id, { status: false }, { new: true });
   if (!product) {
-    return res.status(404).json({ error: "Product not found" });
+    return res.status(404).json({ error: 'Product not found' });
   }
   return res.status(204).json();
 };
