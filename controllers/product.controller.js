@@ -1,6 +1,8 @@
+//escoger metodo ack para confirmar que la tv se actualizo ojo!!!!!!!!!
 const { response, request } = require('express');
 const Product = require('../models/Product');
 const { uploadFile, deleteUploadedFiles } = require('../helpers/upload');
+const { emitPublic } = require('../sockets/bus');
 
 const getProducts = async (req, res = response) => {
   const page = Math.max(1, Number(req.query.page) || 1);
@@ -75,7 +77,7 @@ const createProduct = async (req = request, res = response) => {
   }
 
   await product.save();
-
+  emitPublic('product:new', product);
   const populatedProduct = await product.populate('category', 'name');
 
   res.status(201).json({ product: populatedProduct });

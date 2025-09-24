@@ -1,29 +1,41 @@
 const express = require('express');
 const cors = require('cors');
-const { dbConnection } = require('../database/config');
 const fileUpload = require('express-fileupload');
+
+const { dbConnection } = require('../database/config');
+const { setIO } = require('../sockets/bus');
+
 class Server {
   constructor() {
     this.app = express();
     this.port = process.env.PORT;
+    //creación del servidor de express y socket.io
+    this.server = require('http').createServer(this.app);
+    //configuración de sockets
+    this.io = require('socket.io')(this.server, {
+      cors: {
+        origin: ['http://localhost:5173', 'https://saeseg.app'],
+        methods: ['GET', 'POST'],
+        credentials: true,
+      },
+    });
 
+    //Conectar a base de datos
     this.databaseConnection();
 
     //middleware
     this.middlwares();
     //Routes
     this.routes();
+    //Sockets
+    setIO(this.io);
+    this.sockets();
   }
   async databaseConnection() {
     await dbConnection();
   }
   middlwares() {
     const allowedOrigins = ['https://saeseg.app', 'http://localhost:5173'];
-    this.app.use((req, _res, next) => {
-      console.log('CORS → Origin:', req.headers.origin, '| URL:', req.method, req.originalUrl);
-      next();
-    });
-
     this.app.use(
       cors({
         origin: function (origin, callback) {
@@ -63,8 +75,13 @@ class Server {
     this.app.use('/api/store-settings/', require('../routes/store-settings'));
   }
 
+  sockets() {
+    //importar sockets
+    require('../sockets')(this.io);
+  }
+
   listen() {
-    this.app.listen(process.env.PORT, () => {
+    this.server.listen(process.env.PORT, () => {
       console.log('server running in port ' + this.port);
     });
   }
