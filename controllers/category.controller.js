@@ -6,7 +6,6 @@ const createCategory = async (req = request, res = response) => {
 
   const category = new Category({ name: name.toUpperCase() });
   await category.save();
-
   return res.status(201).json({ category });
 };
 
