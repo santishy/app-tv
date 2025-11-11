@@ -13,6 +13,7 @@ const {
   getProduct,
   getProducts,
   updateProduct,
+  downloadProductImages,
 } = require('../controllers/product.controller');
 
 const productImagesRouter = require('./product-images');
@@ -21,6 +22,8 @@ const { validateDimensionsImage } = require('../middlewares/validate-image-dimen
 const router = Router();
 
 router.use('/:id', productImagesRouter);
+
+router.get('/:id/images/download', [verifyToken, validateRequests], downloadProductImages);
 
 router.get(
   '/',

@@ -40,7 +40,7 @@ const uploadFile = (files, folder = '') => {
       );
       tempPath = file.tempFilePath;
 
-      if (!fs.existsSync(uploadFile)) {
+      if (!fs.existsSync(uploadPath)) {
         fs.mkdirSync(
           path.join(process.env.UPLOAD_PATH, './uploads/', folder), //PRIMER parámetro era __dirname
           {

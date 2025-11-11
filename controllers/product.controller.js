@@ -56,7 +56,7 @@ const updateProduct = async (req = request, res = response) => {
     rest.images = results;
   }
   const product = await Product.findByIdAndUpdate(id, rest, { new: true });
-
+  emitPublic('product:update', product);
   res.json(product);
 };
 
@@ -92,10 +92,44 @@ const deleteProduct = async (req, res) => {
   return res.status(204).json();
 };
 
+const downloadProductImages = async (req, res) => {
+  const { id } = req.params;
+  const archiver = require('archiver');
+  const fs = require('fs');
+  const product = await Product.findById(id, { images: 1 });
+  if (!product) {
+    return res.status(404).json({ message: 'Product not found' });
+  }
+  if (product.images.length === 0 || !product.images) {
+    return res.status(404).json({ message: 'No images found for this product' });
+  }
+  const nameZip = `product-${id}-images.zip`;
+  res.setHeader('Content-Disposition', `attachment; filename=${nameZip}`);
+  res.setHeader('Content-Type', 'application/zip');
+
+  const archive = archiver('zip', {
+    zlib: { level: 9 },
+  });
+  archive.pipe(res);
+  product.images.forEach((image) => {
+    const filePath = require('path').join(
+      process.env.UPLOAD_PATH,
+      'uploads',
+      'products',
+      image.url,
+    );
+    if (fs.existsSync(filePath)) {
+      archive.file(filePath, { name: image.url });
+    }
+  });
+  archive.finalize();
+};
+
 module.exports = {
   getProducts,
   getProduct,
   updateProduct,
   createProduct,
   deleteProduct,
+  downloadProductImages,
 };
