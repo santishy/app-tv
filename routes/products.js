@@ -54,7 +54,7 @@ router.post(
     check('title').notEmpty().withMessage('El campo título es requerido.'),
     check('model').notEmpty().withMessage('El campo modelo es requerido.'),
     check('title').custom(productExists).withMessage('El producto ya existe en la base de datos.'),
-    validateFiles(['jpg', 'png', 'jpeg', 'git', 'webp'], 'images'),
+    validateFiles(['jpg', 'png', 'jpeg', 'gif', 'webp'], 'images'),
     validateDimensionsImage('images', { width: 720, height: 360 }),
     check('description').notEmpty().withMessage('El campo descripción es requerido.'),
     check('category').isMongoId().withMessage('El id categoría no es un ID valido.'),
@@ -91,7 +91,7 @@ router.patch(
     check('category')
       .custom(theFieldExists('Category', '_id'))
       .withMessage('El campo categoría no existe en la base de datos.'),
-    validateFiles(['jpg', 'png', 'jpeg', 'git', 'webp'], 'images'),
+    validateFiles(['jpg', 'png', 'jpeg', 'gif', 'webp'], 'images'),
     validateDimensionsImage('images', { width: 720, height: 360 }),
     // <check("images")
     //   .custom(validateDimensionsImage(1980, 1080))

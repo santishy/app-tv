@@ -20,6 +20,10 @@ const productSchema = Schema(
         },
       }, */
     ],
+    showInShowcase: {
+      type: Boolean,
+      default: true,
+    },
     status: {
       type: Boolean,
       default: true,
