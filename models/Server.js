@@ -73,6 +73,7 @@ class Server {
     this.app.use('/api/categories/', require('../routes/categories'));
     this.app.use('/images/', require('../routes/images'));
     this.app.use('/api/store-settings/', require('../routes/store-settings'));
+    this.app.use('/api/campaigns/', require('../routes/campaign'));
   }
 
   sockets() {

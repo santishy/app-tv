@@ -48,6 +48,17 @@ const theFieldExists = (modelName, field) => {
   };
 };
 
+const endDateAfterStartDate = (startDateField = 'startDate') => {
+  return (value, { req }) => {
+    const startDate = new Date(req.body[startDateField]);
+    const endDate = new Date(value);
+    if (endDate < startDate) {
+      throw new Error('The end date must be after the start date');
+    }
+    return true;
+  };
+};
+
 const productExists = async (title, { req }) => {
   let model = req.body.model;
 
@@ -79,4 +90,5 @@ module.exports = {
   validateUniqueField,
   theFieldExists,
   productExists,
+  endDateAfterStartDate,
 };
